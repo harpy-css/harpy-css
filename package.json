@@ -1,0 +1,30 @@
+{
+  "name": "harpy-generator",
+  "version": "0.1.0",
+  "description": "CSS generator for Harpy",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive",
+    "test:watch": "npm run test -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/harpy-css/harpy-generator.git"
+  },
+  "author": "Fredrik Johansson <jeanfredrik@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harpy-css/harpy-generator/issues"
+  },
+  "homepage": "https://github.com/harpy-css/harpy-generator#readme",
+  "dependencies": {
+    "free-style": "^1.0.2"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4"
+  },
+  "jshintConfig": {
+    "esnext": true
+  }
+}
