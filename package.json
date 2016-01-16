@@ -1,6 +1,6 @@
 {
-  "name": "harpy-generator",
-  "version": "0.1.0",
+  "name": "harpy-css",
+  "version": "0.2.0",
   "description": "CSS generator for Harpy",
   "main": "index.js",
   "scripts": {
@@ -9,16 +9,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/harpy-css/harpy-generator.git"
+    "url": "git://github.com/harpy-css/harpy-css.git"
   },
   "author": "Fredrik Johansson <jeanfredrik@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/harpy-css/harpy-generator/issues"
+    "url": "https://github.com/harpy-css/harpy-css/issues"
   },
-  "homepage": "https://github.com/harpy-css/harpy-generator#readme",
+  "homepage": "https://github.com/harpy-css/harpy-css#readme",
   "dependencies": {
-    "free-style": "^1.0.2"
+    "free-style": "^1.0.2",
+    "lodash": "^4.0.0"
   },
   "devDependencies": {
     "chai": "^3.4.1",

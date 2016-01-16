@@ -1,41 +1,132 @@
-var harpyGenerator = require('../index.js');
+var harpyCSS = require('../index.js');
 var expect = require('chai').expect;
 
-describe('harpyGenerator.selector', function() {
-	it('handles pseudo-classes', function() {
-		var result = harpyGenerator.selector('hover-blue', {
-			state: 'hover'
-		});
-		expect(result).to.equal('.hover-blue:hover');
+describe('harpyCSS.create', function() {
+	it('creates a HarpyCssObject instance', function() {
+		var obj = harpyCSS.create();
+		expect(obj).to.be.an('object');
 	});
 });
-describe('harpyGenerator.rule', function() {
-	it('returns a string', function() {
-		var result = harpyGenerator.rule('mtm', {
-			'margin-top': '1rem'
+
+describe('HarpyCssObject.add', function() {
+	it('handles params with declaration', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
 		});
-		expect(result).to.be.a('string');
-	});
-	it('returns a css rule', function() {
-		var result = harpyGenerator.rule('mtm', {
-			'margin-top': '1rem'
-		});
+		var result = obj.stringify();
 		expect(result).to.equal('.mtm{margin-top:1rem}');
 	});
-	it('handles pseudo-classes', function() {
-		var result = harpyGenerator.rule('hover-blue', {
-			'color': 'blue'
+	it('handles params and declarations object', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
 		}, {
-			state: 'hover'
+			marginTop: '1rem',
 		});
-		expect(result).to.equal('.hover-blue:hover{color:blue}');
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}');
 	});
-	it('handles media', function() {
-		var result = harpyGenerator.rule('col3-md', {
-			'width': '25%'
-		}, {
-			media: '(min-width:40em)'
+	it('handles params and declarations array', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
+		}, [{
+			property: 'margin-top',
+			value: '1rem',
+		}]);
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}');
+	});
+});
+
+describe('HarpyCssObject.stringify', function() {
+	it('returns a string', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
 		});
-		expect(result).to.equal('@media (min-width:40em){.col3-md{width:25%}}');
+		var result = obj.stringify();
+		expect(result).to.be.a('string');
+	});
+	it('handles several calls to `add`', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
+		});
+		obj.add({
+			name: 'mbm',
+			property: 'margin-bottom',
+			value: '1rem',
+		});
+		obj.add({
+			name: 'mvm',
+		}, {
+			'marginTop': '1rem',
+			'marginBottom': '1rem',
+		});
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm,.mvm{margin-top:1rem}.mbm,.mvm{margin-bottom:1rem}');
+	});
+	it('handles media queries', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
+		});
+		obj.add({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
+			media: '(min-width:40em)',
+		});
+		obj.add({
+			name: 'mtm-md',
+			property: 'margin-top',
+			value: '1rem',
+			media: '(min-width:40em)',
+		});
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}@media (min-width:40em){.mtm,.mtm-md{margin-top:1rem}}');
+	});
+	it('handles pseudo-classes', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'blue',
+			property: 'color',
+			value: 'blue',
+		});
+		obj.add({
+			name: 'blue',
+			property: 'color',
+			value: 'blue',
+			state: 'hover',
+		});
+		obj.add({
+			name: 'hover-blue',
+			property: 'color',
+			value: 'blue',
+			state: 'hover',
+		});
+		var result = obj.stringify();
+		expect(result).to.equal('.blue,.blue:hover,.hover-blue:hover{color:blue}');
+	});
+});
+
+describe('harpyCSS.hash', function() {
+	it('returns a canonical string of rule', function() {
+		var result = harpyCSS.hash('margin-top', '1rem');
+		expect(result).to.equal('margin-top:1rem');
+	});
+	it('handles media queries', function() {
+		var result = harpyCSS.hash('margin-top', '1rem', '(min-width:40em)');
+		expect(result).to.equal('margin-top:1rem;@media (min-width:40em)');
 	});
 });
