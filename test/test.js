@@ -40,6 +40,15 @@ describe('HarpyCssObject.add', function() {
 		var result = obj.stringify();
 		expect(result).to.equal('.mtm{margin-top:1rem}');
 	});
+	it('handles prefixed declarations in params', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
+			'#margin-top': '1rem',
+		});
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}');
+	});
 });
 
 describe('HarpyCssObject.prepare', function() {
@@ -209,6 +218,28 @@ describe('HarpyCssObject.stringify', function() {
 		});
 		var result = obj.stringify();
 		expect(result).to.equal('.blue,.blue:hover,.hover-blue:hover{color:blue}');
+	});
+	it('handles pretty style', function() {
+		var obj = harpyCSS.create();
+		obj.add({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
+		});
+		obj.add({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
+			media: '(min-width:40em)',
+		});
+		obj.add({
+			name: 'mtm-md',
+			property: 'margin-top',
+			value: '1rem',
+			media: '(min-width:40em)',
+		});
+		var result = obj.stringify({beautify: true});
+		expect(result).to.equal('.mtm {\n\tmargin-top: 1rem;\n}\n@media (min-width:40em) {\n\t.mtm, .mtm-md {\n\t\tmargin-top: 1rem;\n\t}\n}\n');
 	});
 });
 
