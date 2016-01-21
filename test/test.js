@@ -42,6 +42,98 @@ describe('HarpyCssObject.add', function() {
 	});
 });
 
+describe('HarpyCssObject.prepare', function() {
+	it('handles missing argument', function() {
+		var obj = harpyCSS.create();
+		obj.prepare().join({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
+		}).add();
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}');
+	});
+	it('handles params object', function() {
+		var obj = harpyCSS.create();
+		obj.prepare({
+			name: 'mtm',
+			property: 'margin-top',
+			value: '1rem',
+		}).add();
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}');
+	});
+	it('handles params array', function() {
+		var obj = harpyCSS.create();
+		obj.prepare([
+			{
+				name: 'mtm',
+				property: 'margin-top',
+				value: '1rem',
+			},
+			{
+				name: 'mbm',
+				property: 'margin-bottom',
+				value: '1rem',
+			},
+		]).add();
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}.mbm{margin-bottom:1rem}');
+	});
+});
+
+describe('HarpyCssWrappedParams.join', function() {
+	it('handles params object', function() {
+		var obj = harpyCSS.create();
+		obj.prepare({
+			name: 'mt',
+			property: 'margin-top',
+		}).join({
+			name: 'm',
+			value: '1rem',
+		}).add();
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}');
+	});
+	it('handles params array', function() {
+		var obj = harpyCSS.create();
+		obj.prepare({
+			name: 'm',
+		}).join([
+			{
+				name: 't',
+				property: 'margin-top',
+			},
+			{
+				name: 'b',
+				property: 'margin-bottom',
+			},
+		]).join({
+			name: 'm',
+			value: '1rem',
+		}).add();
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}.mbm{margin-bottom:1rem}');
+	});
+});
+
+describe('HarpyCssWrappedParams.joinMap', function() {
+	it('handles param map', function() {
+		var obj = harpyCSS.create();
+		obj.prepare({
+			name: 'm',
+		}).joinMap('property', {
+			't': 'margin-top',
+			'b': 'margin-bottom',
+		}).join({
+			name: 'm',
+			value: '1rem',
+		}).add();
+		var result = obj.stringify();
+		expect(result).to.equal('.mtm{margin-top:1rem}.mbm{margin-bottom:1rem}');
+	});
+});
+
 describe('HarpyCssObject.stringify', function() {
 	it('returns a string', function() {
 		var obj = harpyCSS.create();
