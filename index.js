@@ -22,23 +22,40 @@ HarpyCssObject.prototype.add = function(params, declarations) {
 			};
 		}));
 	} else {
-		property = params.property;
-		value = params.value;
-		media = params.media;
-		var hash = harpyCssHash(property, value, media);
-		if(!this._rules[hash]) {
-			this._rules[hash] = new HarpyCssRule(hash, property, value, media);
-			if(!this._rulesByMedia[media || 'all']) {
-				this._rulesByMedia[media || 'all'] = [this._rules[hash]];
-			} else {
-				this._rulesByMedia[media || 'all'].push(this._rules[hash]);
+		declarations = [];
+		params = _.clone(params);
+		_.forEach(params, function(value, key) {
+			if(key.substr(0,1) === '#') {
+				declarations.push({
+					property: key.substr(1),
+					value: value,
+				});
+				delete params[key];
 			}
+		});
+		if(declarations.length) {
+			_.each(declarations, function(declaration) {
+				self.add(_.assign({}, params, declaration));
+			});
+		} else {
+			property = params.property;
+			value = params.value;
+			media = params.media;
+			var hash = harpyCssHash(property, value, media);
+			if(!this._rules[hash]) {
+				this._rules[hash] = new HarpyCssRule(hash, property, value, media);
+				if(!this._rulesByMedia[media || 'all']) {
+					this._rulesByMedia[media || 'all'] = [this._rules[hash]];
+				} else {
+					this._rulesByMedia[media || 'all'].push(this._rules[hash]);
+				}
+			}
+			var selector = '.'+name;
+			if(params.state) {
+				selector += ':'+params.state;
+			}
+			this._rules[hash].addSelector(selector);
 		}
-		var selector = '.'+name;
-		if(params.state) {
-			selector += ':'+params.state;
-		}
-		this._rules[hash].addSelector(selector);
 	}
 };
 HarpyCssObject.prototype.stringify = function() {
@@ -53,6 +70,73 @@ HarpyCssObject.prototype.stringify = function() {
 		}
 		return result;
 	}).join('');
+};
+HarpyCssObject.prototype.addMap = function(params, map) {
+	var self = this;
+	_.each(map, function(value, name) {
+		self.add(_.assign({}, params, {
+			name: name,
+			value: value,
+		}));
+	});
+};
+HarpyCssObject.prototype.prepare = function(paramsList) {
+	return new HarpyCssWrappedParams(this, paramsList);
+};
+
+var HarpyCssWrappedParams = function(obj, paramsList) {
+	this._obj = obj;
+	if(_.isArray(paramsList)) {
+		this._paramsList = paramsList;
+	} else {
+		this._paramsList = [paramsList || {}];
+	}
+};
+HarpyCssWrappedParams.prototype.join = function(paramsList) {
+	if(!_.isArray(paramsList)) {
+		paramsList = [paramsList];
+	}
+	this._paramsList = _.flatMap(this._paramsList, function(params1) {
+		return _.map(paramsList, function(params2) {
+			return _.reduce(params2, function(result, value, key) {
+				if(_.has(result, key)) {
+					result[key] += value;
+				} else {
+					result[key] = value;
+				}
+				return result;
+			}, _.clone(params1));
+		});
+	});
+	return this;
+};
+HarpyCssWrappedParams.prototype.joinMap = function(keyKey, valueKey, map) {
+	if(_.isObject(keyKey)) {
+		map = keyKey;
+		valueKey = 'value';
+		keyKey = 'name';
+	} else if(_.isObject(valueKey)) {
+		map = valueKey;
+		valueKey = keyKey;
+		keyKey = 'name';
+	}
+	return this.join(_.map(map, function(value, key) {
+		var result = {};
+		result[keyKey] = key;
+		result[valueKey] = value;
+		return result;
+	}));
+};
+HarpyCssWrappedParams.prototype.add = function() {
+	var self = this;
+	_.each(this._paramsList, function(params) {
+		self._obj.add(params);
+	});
+	return this;
+};
+HarpyCssWrappedParams.prototype.tap = function(callback) {
+	callback(this);
+	return this;
 };
 
 var HarpyCssRule = function(hash, property, value, media) {
