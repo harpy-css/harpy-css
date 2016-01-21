@@ -57,15 +57,44 @@ HarpyCssObject.prototype.add = function(params, declarations) {
 		}
 	}
 };
-HarpyCssObject.prototype.stringify = function() {
+HarpyCssObject.prototype.stringify = function(options) {
+	options = options || {};
+	var SPACE = options.beautify ? ' ' : '';
+	var SEMICOLON = options.beautify ? ';' : '';
+	var INDENT = options.beautify ? '\t' : '';
+	var LINEBREAK = options.beautify ? '\n' : '';
 	var self = this;
 	return _(self._rulesByMedia).map(function(rules) {
 		var result = '';
+		var media = rules[0].media;
+		var LOCAL_INDENT = media ? INDENT : '';
 		result += _(rules).map(function(rule) {
-			return _(rule.selectors).sort().join(',')+'{'+rule.property+':'+rule.value+'}';
+			return LOCAL_INDENT +
+				_(rule.selectors).sort().join(',' + SPACE) +
+				SPACE +
+				'{' +
+				LINEBREAK +
+				LOCAL_INDENT +
+				INDENT +
+				rule.property +
+				':' +
+				SPACE +
+				rule.value +
+				SEMICOLON +
+				LINEBREAK +
+				LOCAL_INDENT +
+				'}'+
+				LINEBREAK;
 		}).join('');
-		if(rules[0].media) {
-			result = '@media '+rules[0].media+'{'+result+'}';
+		if(media) {
+			result = '@media ' +
+				rules[0].media +
+				SPACE +
+				'{' +
+				LINEBREAK +
+				result +
+				'}' +
+				LINEBREAK;
 		}
 		return result;
 	}).join('');
