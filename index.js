@@ -1,4 +1,3 @@
-var FreeStyle = require('free-style');
 var _ = require('lodash');
 
 var HarpyCssObject = function() {
