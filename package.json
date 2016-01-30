@@ -1,6 +1,6 @@
 {
   "name": "harpy-css",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "CSS generator for Harpy",
   "main": "index.js",
   "scripts": {
