@@ -46,13 +46,13 @@ css.stringify()
 The result of `css.stringify()` above:
 
 ```css
-.mtn,.mvm{margin-top:1rem}.mvm{margin-bottom:1rem}.mhm{margin-right:1rem}.mhm{margin-left:1rem}
+.mtm,.mvm{margin-top:1rem}.mvm{margin-bottom:1rem}.mhm{margin-right:1rem}.mhm{margin-left:1rem}
 ```
 
 Unminified version:
 
 ```css
-.mtn,
+.mtm,
 .mvm {
 	margin-top: 1rem
 }
