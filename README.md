@@ -1,5 +1,7 @@
 # harpy-css
-CSS generator for Harpy.
+Harpy CSS generator
+
+## Introduction
 
 This utility will help you create DRY CSS utility classes with all the power of Javascript at your hands. There is also a gulp version available called [gulp-harpy-css](https://github.com/harpy-css/gulp-harpy-css).
 
@@ -46,13 +48,13 @@ css.stringify()
 The result of `css.stringify()` above:
 
 ```css
-.mtn,.mvm{margin-top:1rem}.mvm{margin-bottom:1rem}.mhm{margin-right:1rem}.mhm{margin-left:1rem}
+.mtm,.mvm{margin-top:1rem}.mvm{margin-bottom:1rem}.mhm{margin-right:1rem}.mhm{margin-left:1rem}
 ```
 
 Unminified version:
 
 ```css
-.mtn,
+.mtm,
 .mvm {
 	margin-top: 1rem
 }
