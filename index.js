@@ -160,7 +160,7 @@ HarpyCssWrappedParams.prototype.add = function() {
 	_.each(this._paramsList, function(params) {
 		self._obj.add(params);
 	});
-	return this;
+	return self._obj;
 };
 HarpyCssWrappedParams.prototype.tap = function(callback) {
 	callback(this);

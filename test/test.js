@@ -143,6 +143,31 @@ describe('HarpyCssWrappedParams.joinMap', function() {
 	});
 });
 
+describe('HarpyCssWrappedParams.add', function() {
+	it('works like HarpyCssObject.add', function() {
+		var obj1 = harpyCSS.create();
+		var obj2 = harpyCSS.create();
+		obj1.prepare({
+			name: 'bt',
+			property: 'border-top-',
+		}).joinMap('property', 'value', {
+			'width': '1px',
+			'color': 'currentColor',
+			'style': 'solid',
+		}).add();
+		obj2.add({
+			name: 'bt',
+		}, {
+			'border-top-width': '1px',
+			'border-top-color': 'currentColor',
+			'border-top-style': 'solid',
+		});
+		var result1 = obj1.stringify();
+		var result2 = obj2.stringify();
+		expect(result1).to.equal(result2);
+	});
+});
+
 describe('HarpyCssObject.stringify', function() {
 	it('returns a string', function() {
 		var obj = harpyCSS.create();
